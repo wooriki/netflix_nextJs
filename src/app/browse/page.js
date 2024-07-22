@@ -4,17 +4,21 @@ import UnauthPage from "@/components/unauth-page";
 import { useSession } from "next-auth/react";
 
 export default function Browse() {
-  const { data: session, status } = useSession();
-  const date = new Date();
+  const { data: session } = useSession();
 
-  console.log("Session status:", status);
-  console.log("Session data:", session);
-  console.log("Current date:", date);
-  console.log("abc");
+  console.log("session", session);
 
-  // if (session === null) {
-  //   return <UnauthPage />;
-  // }
+  if (session === null) {
+    return <UnauthPage />;
+  }
 
-  return <div>Browse</div>;
+  return (
+    <div>
+      Browse
+      {/* <div>
+        <p>{session.user?.name.toUpperCase()}</p>
+        <img src={session.user?.image} alt="image" />
+      </div> */}
+    </div>
+  );
 }

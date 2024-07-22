@@ -1,14 +1,12 @@
 "use client";
 
+import UnauthPage from "@/components/unauth-page";
 import { useSession } from "next-auth/react";
 
 export default function Movies() {
-  const { data: session, status } = useSession();
-  const date = new Date();
+  const { data: session } = useSession();
 
-  console.log("Session status:", status);
-  console.log("Session data:", session);
-  console.log("Current date:", date);
-  console.log("abc");
+  if (session === null) return <UnauthPage />;
+
   return <div>Movies</div>;
 }
