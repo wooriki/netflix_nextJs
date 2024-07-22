@@ -12,13 +12,5 @@ export default function Browse() {
     return <UnauthPage />;
   }
 
-  return (
-    <div>
-      Browse
-      {/* <div>
-        <p>{session.user?.name.toUpperCase()}</p>
-        <img src={session.user?.image} alt="image" />
-      </div> */}
-    </div>
-  );
+  return <div>Browse</div>;
 }
