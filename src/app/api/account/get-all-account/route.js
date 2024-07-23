@@ -1,12 +1,12 @@
-import connetToDB from "@/database";
-import Account from "@/models/Account";
+import connectToDB from "../../../../database/index";
+import Account from "../../../../models/Account";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req) {
   try {
-    await connetToDB();
+    await connectToDB();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
