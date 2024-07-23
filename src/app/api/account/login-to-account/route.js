@@ -14,8 +14,8 @@ export async function POST(req) {
 
     if (!getCurrentAccount) {
       return NextResponse.json({
-        succes: false,
-        messeage: "Account not found",
+        success: false,
+        message: "Account not found",
       });
     }
 
@@ -23,20 +23,20 @@ export async function POST(req) {
 
     if (checkPin) {
       return NextResponse.json({
-        succes: true,
-        messeage: "Welcome to Netflix",
+        success: true,
+        message: "Welcome to Netflix",
       });
     } else {
       return NextResponse.json({
-        succes: false,
-        messeage: "Incorrect PIN ! Please try again",
+        success: false,
+        message: "Incorrect PIN ! Please try again",
       });
     }
   } catch (e) {
     console.log(e);
     return NextResponse.json({
-      succes: false,
-      messeage: "Something Went To Wrong",
+      success: false,
+      message: "Something Went To Wrong",
     });
   }
 }

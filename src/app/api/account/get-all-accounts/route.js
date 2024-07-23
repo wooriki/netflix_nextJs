@@ -16,19 +16,19 @@ export async function GET(req) {
     if (getAllAccounts) {
       return NextResponse.json({
         success: true,
-        date: getAllAccounts,
+        data: getAllAccounts,
       });
     } else {
       return NextResponse.json({
-        succes: false,
-        messeage: "Something Went To Wrong",
+        success: false,
+        message: "Something Went wrong",
       });
     }
   } catch (e) {
     console.log(e);
     return NextResponse.json({
-      succes: false,
-      messeage: "Something Went To Wrong",
+      success: false,
+      message: "Something Went wrong",
     });
   }
 }
