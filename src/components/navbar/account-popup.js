@@ -32,7 +32,18 @@ export default function AccountPopup({
               ))
           : null}
       </div>
-      <div></div>
+      <div>
+        <button
+          onClick={() => {
+            setPageLoader(true);
+            signOut();
+            setLoggedInAccount(null);
+            sessionStorage.removeItem("loggedInAccount");
+          }}
+        >
+          Sign out of Netflix
+        </button>
+      </div>
     </div>
   );
 }

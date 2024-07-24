@@ -7,6 +7,7 @@ import Search from "./search";
 import { AiOutlineSearch } from "react-icons/ai";
 import { GlobalContext } from "@/context";
 import AccountPopup from "./account-popup";
+import CircleLoader from "../circle-loader";
 
 export default function Navbar() {
   const { data: session } = useSession;
@@ -20,10 +21,10 @@ export default function Navbar() {
 
   const {
     setPageLoader,
+    pageLoader,
     loggedInAccount,
     accounts,
     setAccounts,
-    signOut,
     setLoggedInAccount,
   } = useContext(GlobalContext);
 
@@ -85,6 +86,8 @@ export default function Navbar() {
   useEffect(() => {
     getAllAccounts();
   }, []);
+
+  if (pageLoader) return <CircleLoader />;
 
   return (
     <div className="relative">

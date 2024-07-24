@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import Head from "next/head";
 import Navbar from "../navbar";
+import MediaRow from "../media-row";
+import Banner from "../banner";
 
-export default function CommonLayout() {
+export default function CommonLayout({ mediaData }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -17,7 +19,25 @@ export default function CommonLayout() {
       </Head>
       <>
         <Navbar />
-        <div className=" relative pl-4 pb-24 lg:space-y-24"></div>
+        <div className=" relative pl-4 pb-24 lg:space-y-24">
+          <Banner
+            medias={mediaData && mediaData.lenght ? mediaData[0].medias : []}
+          />
+          <Banner
+            medias={mediaData && mediaData.length ? mediaData[0].medias : []}
+          />
+          <section className="md:space-y-16">
+            {mediaData && mediaData.length
+              ? mediaData.map((item) => (
+                  <MediaRow
+                    key={item.id}
+                    title={item.title}
+                    medias={item.medias}
+                  />
+                ))
+              : null}
+          </section>
+        </div>
       </>
     </motion.div>
   );
