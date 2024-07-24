@@ -4,7 +4,7 @@ import UnauthPage from "@/components/unauth-page";
 import { useSession } from "next-auth/react";
 import { useContext } from "react";
 import { GlobalContext } from "../../context";
-import ManageAccouts from "@/components/manage-account";
+import ManageAccouts from "@/components/manage-accounts";
 
 export default function Browse() {
   const { loggedInAccount } = useContext(GlobalContext);

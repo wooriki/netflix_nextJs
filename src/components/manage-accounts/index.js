@@ -5,28 +5,47 @@ import { useSession } from "next-auth/react";
 import { useContext, useEffect, useState } from "react";
 import CircleLoader from "../circle-loader";
 import AccountForm from "./account-form";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import PinContainer from "./pin-container";
+import { usePathname, useRouter } from "next/navigation";
 
 const initialFormData = {
   name: "",
   pin: "",
 };
 
-export default function ManageAccouts() {
-  const { accounts, setAccounts, pageLoader, setPageLoader } =
-    useContext(GlobalContext);
+export default function ManageAccounts() {
+  const {
+    accounts,
+    setAccounts,
+    pageLoader,
+    setPageLoader,
+    setLoggedInAccount,
+  } = useContext(GlobalContext);
   const [showAccountForm, setShowAccountForm] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
+  const [showDeleteIcon, setShowDeleteIcon] = useState(false);
+  const [pin, setPin] = useState("");
+  const [pinError, setPinError] = useState(false);
+  const [showPinContainer, setShowPinContainer] = useState({
+    show: false,
+    account: null,
+  });
   const { data: session } = useSession();
+  const pathname = usePathname();
+  const router = useRouter();
 
   async function getAllAccounts() {
-    const response = await fetch(
+    const res = await fetch(
       `/api/account/get-all-accounts?id=${session?.user?.uid}`,
       {
         method: "GET",
       }
     );
-    const data = await response.json();
-    console.log("data", data);
+
+    const data = await res.json();
+
+    console.log(data);
 
     if (data && data.data && data.data.length) {
       setAccounts(data.data);
@@ -51,7 +70,9 @@ export default function ManageAccouts() {
         uid: session?.user?.uid,
       }),
     });
+
     const data = await res.json();
+
     if (data.success) {
       getAllAccounts();
       setFormData(initialFormData);
@@ -59,8 +80,55 @@ export default function ManageAccouts() {
     } else {
       getAllAccounts();
     }
-    console.log("here!", data);
+
+    console.log(data, "datadata");
   }
+
+  async function handleRemoveAccount(getItem) {
+    const res = await fetch(`/api/account/remove-account?id=${getItem._id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      getAllAccounts();
+      setShowDeleteIcon(false);
+    }
+  }
+
+  async function handlePinSubmit(value, index) {
+    setPageLoader(true);
+    const response = await fetch("/api/account/login-to-account", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        uid: session?.user?.uid,
+        accountId: showPinContainer.account._id,
+        pin: value,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      setLoggedInAccount(showPinContainer.account);
+      sessionStorage.setItem(
+        "loggedInAccount",
+        JSON.stringify(showPinContainer.account)
+      );
+      router.push(pathname);
+      setPageLoader(false);
+    } else {
+      setPageLoader(false);
+      setPinError(true);
+      setPin("");
+    }
+  }
+
+  console.log(pageLoader, "accounts");
 
   if (pageLoader) return <CircleLoader />;
 
@@ -70,12 +138,17 @@ export default function ManageAccouts() {
         <h1 className="text-white font-bold text-[54px] my-[36px]">
           Who's Watching?
         </h1>
-        <ul className="flex gap-8 p-0 my-[25px]">
+        <ul className="flex p-0 my-[25px]">
           {accounts && accounts.length
             ? accounts.map((item) => (
                 <li
-                  className="max-w-[200px] min-w-[155px] cursor-pointer flex flex-col items-center gap-3 "
+                  className="max-w-[200px] w-[155px] cursor-pointer flex flex-col items-center gap-3 min-w-[200px]"
                   key={item._id}
+                  onClick={
+                    showDeleteIcon
+                      ? null
+                      : () => setShowPinContainer({ show: true, account: item })
+                  }
                 >
                   <div className="relative">
                     <img
@@ -83,8 +156,16 @@ export default function ManageAccouts() {
                       alt="Account"
                       className="max-w-[200px] rounded min-w-[84px] max-h-[200px] min-h-[84px] object-cover w-[155px] h-[155px]"
                     />
+                    {showDeleteIcon ? (
+                      <div
+                        onClick={() => handleRemoveAccount(item)}
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
+                      >
+                        <TrashIcon width={30} height={30} color="black" />
+                      </div>
+                    ) : null}
                   </div>
-                  <span className="mb-4 ">{item.name}</span>
+                  <span className="mb-4">{item.name}</span>
                   <svg
                     width="24"
                     height="24"
@@ -105,24 +186,39 @@ export default function ManageAccouts() {
                 </li>
               ))
             : null}
+
           {accounts && accounts.length < 4 ? (
             <li
-              key={item.id}
-              onClick={() => {
-                setShowAccountForm(!showAccountForm);
-              }}
-              className="border border-black text-black bg-[#e5b109] font-bold text-lg max-w-[200px] rounded min-w-[84px] max-h-[200px] min-h-[84px] w-[155px] h-[155px] cursor-pointer flex justify-center items-center"
+              onClick={() => setShowAccountForm(!showAccountForm)}
+              className="border text-black bg-[#e5b109] font-bold text-lg border-black max-w-[200px] rounded min-w-[84px] max-h-[200px] min-h-[84px] w-[155px] h-[155px] cursor-pointer flex justify-center items-center"
             >
               Add Account
             </li>
           ) : null}
         </ul>
+        <div className="text-center">
+          <span
+            onClick={() => setShowDeleteIcon(!showDeleteIcon)}
+            className="border border-gray-100 cursor-pointer tracking-wide inline-flex text-sm px-[1.5em] py-[0.5em]"
+          >
+            Manage Profiles
+          </span>
+        </div>
       </div>
+      <PinContainer
+        pin={pin}
+        setPin={setPin}
+        pinError={pinError}
+        setPinError={setPinError}
+        showPinContainer={showPinContainer.show}
+        setShowPinContainer={setShowPinContainer}
+        handlePinSubmit={handlePinSubmit}
+      />
       <AccountForm
+        handleSave={handleSave}
         formData={formData}
         setFormData={setFormData}
         showAccountForm={showAccountForm}
-        handleSave={handleSave}
       />
     </div>
   );

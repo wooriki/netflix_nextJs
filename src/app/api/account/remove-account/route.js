@@ -7,14 +7,13 @@ export const dynamic = "force-dynamic";
 export async function DELETE(req) {
   try {
     await connectToDB();
-
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
     if (!id) {
       return NextResponse.json({
-        succes: false,
-        messeage: "Account ID is mandatory",
+        success: false,
+        message: "Account ID is mandatory",
       });
     }
 
@@ -22,20 +21,20 @@ export async function DELETE(req) {
 
     if (deleteAccount) {
       return NextResponse.json({
-        succes: true,
-        messeage: "Account deleted successfully",
+        success: true,
+        message: "Account deleted successfully",
       });
     } else {
       return NextResponse.json({
-        succes: false,
-        messeage: "Something Went To Wrong",
+        success: false,
+        message: "Something Went wrong",
       });
     }
   } catch (e) {
     console.log(e);
     return NextResponse.json({
-      succes: false,
-      messeage: "Something Went To Wrong",
+      success: false,
+      message: "Something Went wrong",
     });
   }
 }
