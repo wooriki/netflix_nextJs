@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useContext } from "react";
 import { GlobalContext } from "../../context";
 import ManageAccouts from "@/components/manage-accounts";
+import CommonLayout from "@/components/common-layout";
 
 export default function Browse() {
   const { loggedInAccount } = useContext(GlobalContext);
@@ -16,5 +17,9 @@ export default function Browse() {
   if (session === null) return <UnauthPage />;
   if (loggedInAccount === null) return <ManageAccouts />;
 
-  return <div>Browse</div>;
+  return (
+    <main className="flex min-h-screen flex-col">
+      <CommonLayout />
+    </main>
+  );
 }
