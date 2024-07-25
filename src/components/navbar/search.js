@@ -8,7 +8,16 @@ export default function Search({
   searchQuery,
   setSearchQuery,
   setShowSearchBar,
+  setPageLoader,
 }) {
+  function handleSubmit(e) {
+    if (e.key === "Enter" && searchQuery && searchQuery.trim() !== "") {
+      setPageLoader(true);
+      if (pathName.includes("/search"))
+        router.replace(`/search/${searchQuery}`);
+      else router.push(`/search/${searchQuery}`);
+    }
+  }
   return (
     <div className="hidden md:flex justify-center items-center text-center">
       <div className="bg-[rgba(0,0,0,0.75)] border border-[hsla(0%,0%,100%,0.85)] px-4 items-center text-center flex">
@@ -16,6 +25,7 @@ export default function Search({
           <input
             name="search"
             value={searchQuery}
+            onKeyUp={handleSubmit}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search Movies, TV and Dramas"
             className="bg-trasparent text-[14px] font-medium h-[34px] px-4 py-2 placeholder:text-[14px] font-md text-white outline-none w-[210px] "

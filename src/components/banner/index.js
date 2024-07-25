@@ -48,7 +48,9 @@ export default function Banner({ medias }) {
         <button
           className="cursor-pointer flex items-center gap-x-2 rounded px-5 py-1.5 text-sm font-semibold transition hover:opacity-75 md:py-2.5 md:px-8 md:text-xl bg-white text-black"
           onClick={() => {
-            router("");
+            router.push(
+              `/watch/${createRandomMedia?.type}/${createRandomMedia?.id}`
+            );
           }}
         >
           <AiFillPlayCircle className="h-4 w-4 text-black md:h-7 md:w-7 cursor-pointer" />

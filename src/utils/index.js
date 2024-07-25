@@ -68,3 +68,37 @@ export const getTVorMoviesByGenre = async (type, id) => {
     console.log(e);
   }
 };
+
+export const getTVorMovieVideosByID = async (type, id) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}&language=en-US&append_to_response=videos`,
+      {
+        method: "GET",
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getTVorMovieSearchResults = async (type, query) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/search/${type}?api_key=${API_KEY}&include_adult=false&language=en-US&query=${query}`,
+      {
+        method: "GET",
+      }
+    );
+
+    const data = await res.json();
+
+    return data && data.results;
+  } catch (e) {
+    console.log(e);
+  }
+};
