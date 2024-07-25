@@ -19,22 +19,21 @@ export default function CommonLayout({ mediaData }) {
       </Head>
       <>
         <Navbar />
-        <div className=" relative pl-4 pb-24 lg:space-y-24">
-          <Banner
-            medias={mediaData && mediaData.lenght ? mediaData[0].medias : []}
-          />
+        <div className="relative pl-4 pb-24 lg:space-y-24">
           <Banner
             medias={mediaData && mediaData.length ? mediaData[0].medias : []}
           />
           <section className="md:space-y-16">
             {mediaData && mediaData.length
-              ? mediaData.map((item) => (
-                  <MediaRow
-                    key={item.id}
-                    title={item.title}
-                    medias={item.medias}
-                  />
-                ))
+              ? mediaData.map((item, index) => {
+                  return (
+                    <MediaRow
+                      title={item.title}
+                      medias={item.medias}
+                      key={item.id || index}
+                    />
+                  );
+                })
               : null}
           </section>
         </div>
