@@ -7,11 +7,32 @@ import {
   CheckIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { GlobalContext } from "@/context";
 
 const baseUrl = "https://image.tmdb.org/t/p/w500";
 
-export default function MediaItem({ media, title }) {
+export default function MediaItem({
+  media,
+  searchView = false,
+  similarMovieView = false,
+  listView = false,
+  title,
+}) {
   const router = useRouter();
+
+  const {
+    setShowDetailsPopup,
+    loggedInAccount,
+    setFavorites,
+    setCurrentMediaInfoIdAndType,
+    similarMedias,
+    searchResults,
+    setSearchResults,
+    setSimilarMedias,
+    setMediaData,
+    mediaData,
+  } = useContext(GlobalContext);
 
   return (
     <motion.div
@@ -34,7 +55,11 @@ export default function MediaItem({ media, title }) {
           className="rounded sm object-cover md:rounded hover:rounded-sm"
           onClick={() => router.push(`/watch/${media?.type}/${media.id}`)}
         />
-        <div className="space-x-3 hidden absolute p-2 bottom-0 buttonWrapper">
+        <div className="space-x-3 hidden absolute p-2 bottom-0 buttonWrapper ">
+          <h2 className="text-white absolute bottom-20 truncate w-[90%] max-w-xs font-bold">
+            {media.name || media.title}
+          </h2>
+
           <button
             className={`${
               media?.addedToFavorites && !listView && "cursor-not-allowed"
