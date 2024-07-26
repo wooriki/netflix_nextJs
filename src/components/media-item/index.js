@@ -9,6 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { GlobalContext } from "@/context";
+import { useSession } from "next-auth/react";
 
 const baseUrl = "https://image.tmdb.org/t/p/w500";
 
@@ -27,12 +28,38 @@ export default function MediaItem({
     setFavorites,
     setCurrentMediaInfoIdAndType,
     similarMedias,
+
     searchResults,
     setSearchResults,
     setSimilarMedias,
     setMediaData,
     mediaData,
   } = useContext(GlobalContext);
+
+  const { data: session } = useSession();
+
+  async function handleAddToFavorites(item) {
+    const { backdrop_path, poster_path, id, type } = item;
+    const res = await fetch("/api/favorites/add-favorite", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        backdrop_path,
+        poster_path,
+        movieID: id,
+        type,
+        uid: session?.user?.uid,
+        accountID: loggedInAccount?._id,
+      }),
+    });
+
+    const data = await res.json();
+    console.log("here", data);
+  }
+
+  async function handleRemoveFavorites(item) {}
 
   return (
     <motion.div
@@ -61,6 +88,13 @@ export default function MediaItem({
           </h2>
 
           <button
+            onClick={
+              media?.addedToFavorites
+                ? listView
+                  ? () => handleRemoveFavorites(media)
+                  : null
+                : () => handleAddToFavorites(media)
+            }
             className={`${
               media?.addedToFavorites && !listView && "cursor-not-allowed"
             } cursor-pointer border flex p-2 items-center gap-x-2 rounded-full  text-sm font-semibold transition hover:opacity-90 border-white   bg-black opacity-75 text-black`}
@@ -72,13 +106,13 @@ export default function MediaItem({
             )}
           </button>
           <button
-            // onClick={() => {
-            //   setShowDetailsPopup(true);
-            //   setCurrentMediaInfoIdAndType({
-            //     type: media?.type,
-            //     id: listView ? media?.movieID : media?.id,
-            //   });
-            // }}
+            onClick={() => {
+              setShowDetailsPopup(true);
+              setCurrentMediaInfoIdAndType({
+                type: media?.type,
+                id: media?.id,
+              });
+            }}
             className="cursor-pointer p-2 border flex items-center gap-x-2 rounded-full  text-sm font-semibold transition hover:opacity-90  border-white  bg-black opacity-75 "
           >
             <ChevronDownIcon color="#fffffff" className="h-7 w-7" />
