@@ -96,7 +96,7 @@ export default function DetailsPopup({ show, setShow }) {
 
   function handleClose() {
     setShow(false);
-    currentMediaInfoIdAndType(null);
+    setCurrentMediaInfoIdAndType(null);
   }
 
   return (
