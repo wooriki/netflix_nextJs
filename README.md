@@ -33,3 +33,21 @@
 
 - **이미지 관리:**
   - **Next.js Image 컴포넌트:** 최적화된 이미지 로딩 및 크기 조정을 위한 컴포넌트
+
+## Captures
+
+<img width="1752" alt="스크린샷 2024-07-27 오후 10 09 55" src="https://github.com/user-attachments/assets/c5ed8f80-1247-49f7-aac5-55738685d939">
+<img width="1690" alt="스크린샷 2024-07-27 오후 10 07 28" src="https://github.com/user-attachments/assets/3d4f0a1a-2ef2-4705-ac9f-e286b6a82ea9">
+<img width="1749" alt="스크린샷 2024-07-27 오후 10 07 34" src="https://github.com/user-attachments/assets/dc834caa-97b7-42b5-b366-d197a3c5c87f">
+<img width="1756" alt="스크린샷 2024-07-27 오후 10 04 06" src="https://github.com/user-attachments/assets/02c94955-32e8-4955-8a60-8a381efc1f14">
+<img width="1752" alt="스크린샷 2024-07-27 오후 10 04 21" src="https://github.com/user-attachments/assets/2d3bf90b-4ed4-4b2d-90c1-37e7f9878041">
+<img width="1757" alt="스크린샷 2024-07-27 오후 10 12 25" src="https://github.com/user-attachments/assets/d15b9163-c525-465f-a935-81104f85ee00">
+<img width="1757" alt="스크린샷 2024-07-27 오후 10 12 52" src="https://github.com/user-attachments/assets/911f658a-d0a9-47df-9c19-6b856f2a8aca">
+<img width="1747" alt="스크린샷 2024-07-27 오후 10 05 47" src="https://github.com/user-attachments/assets/b294a7d4-08c8-405d-baf0-88d0b795700d">
+<img width="1762" alt="스크린샷 2024-07-27 오후 10 06 08" src="https://github.com/user-attachments/assets/962e328d-b4b7-4cf4-ad22-465f36821444">
+
+
+
+
+
+
