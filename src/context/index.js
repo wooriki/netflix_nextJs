@@ -26,6 +26,7 @@ export default function GlobalState({ children }) {
   }, []);
 
   if (session === undefined) return <CircleLoader />;
+
   return (
     <GlobalContext.Provider
       value={{

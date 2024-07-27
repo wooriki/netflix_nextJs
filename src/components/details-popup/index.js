@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "framer-motion";
 import MuiModal from "@mui/material/Modal";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -28,11 +27,12 @@ export default function DetailsPopup({ show, setShow }) {
     setCurrentMediaInfoIdAndType,
     loggedInAccount,
   } = useContext(GlobalContext);
-
   const [key, setKey] = useState("");
 
   const router = useRouter();
   const { data: session } = useSession();
+
+  console.log(currentMediaInfoIdAndType);
 
   useEffect(() => {
     if (currentMediaInfoIdAndType !== null) {
@@ -85,7 +85,10 @@ export default function DetailsPopup({ show, setShow }) {
           extractSimilarMovies.map((item) => ({
             ...item,
             type: currentMediaInfoIdAndType.type === "movie" ? "movie" : "tv",
-            addedToFavorites: false,
+            addedToFavorites:
+              allFavorites && allFavorites.length
+                ? allFavorites.map((fav) => fav.movieID).indexOf(item.id) > -1
+                : false,
           }))
         );
       }
@@ -151,9 +154,9 @@ export default function DetailsPopup({ show, setShow }) {
             <div className="space-x-2 pb-4 flex gap-4">
               <div className="text-green-400 font-semibold flex gap-2">
                 <span>
-                  {mediaDetails?.release_data
-                    ? mediaDetails?.release_data.split("-")[0]
-                    : "2024"}
+                  {mediaDetails?.release_date
+                    ? mediaDetails?.release_date.split("-")[0]
+                    : "2023"}
                 </span>
                 <div className="inline-flex border-2 border-white/40 rounded px-2">
                   HD

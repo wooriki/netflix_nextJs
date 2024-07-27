@@ -11,22 +11,21 @@ import CircleLoader from "../circle-loader";
 import DetailsPopup from "../details-popup";
 
 export default function Navbar() {
-  const { data: session } = useSession;
+  const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAccountPopup, setShowAccountPopup] = useState(false);
-
   const router = useRouter();
   const pathName = usePathname();
 
   const {
     setPageLoader,
-    pageLoader,
     loggedInAccount,
-    accounts,
     setAccounts,
+    accounts,
     setLoggedInAccount,
+    pageLoader,
     showDetailsPopup,
     setShowDetailsPopup,
   } = useContext(GlobalContext);
@@ -50,7 +49,7 @@ export default function Navbar() {
     {
       id: "my-list",
       title: "My List",
-      path: "/mylist",
+      path: `/my-list/${session?.user?.uid}/${loggedInAccount?._id}`,
     },
   ];
 
@@ -59,6 +58,7 @@ export default function Navbar() {
       if (window.scrollY > 0) setIsScrolled(true);
       else setIsScrolled(false);
     };
+
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -97,12 +97,12 @@ export default function Navbar() {
       <header
         className={`header ${isScrolled && "bg-[#141414]"} hover:bg-[#141414]`}
       >
-        <div className=" flex items-center space-x-2 md:space-x-10">
+        <div className="flex items-center space-x-2 md:space-x-10">
           <img
             src="https://rb.gy/ulxxee"
-            alt="NETFLIX"
             width={120}
             height={120}
+            alt="NETFLIX"
             className="cursor-pointer object-contain"
             onClick={() => router.push("/browse")}
           />
@@ -115,8 +115,8 @@ export default function Navbar() {
                   setSearchQuery("");
                   setShowSearchBar(false);
                 }}
+                className="cursor-pointer text-[16px] font-light text-[#e5e5e5] transition duration-[.4s] hover:text-[#b3b3b3]"
                 key={item.id}
-                className="cursor-pointer text-[16px] font-light text-[#e5e5e5] transition durtation-[.4s] hover:text-[#b3b3b3]"
               >
                 {item.title}
               </li>
@@ -130,8 +130,8 @@ export default function Navbar() {
               router={router}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
-              setShowSearchBar={setShowSearchBar}
               setPageLoader={setPageLoader}
+              setShowSearchBar={setShowSearchBar}
             />
           ) : (
             <AiOutlineSearch
@@ -152,10 +152,7 @@ export default function Navbar() {
           </div>
         </div>
       </header>
-      <DetailsPopup
-        show={showDetailsPopup}
-        setShow={setShowDetailsPopup}
-      ></DetailsPopup>
+      <DetailsPopup show={showDetailsPopup} setShow={setShowDetailsPopup} />
       {showAccountPopup && (
         <AccountPopup
           accounts={accounts}

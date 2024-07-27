@@ -1,7 +1,7 @@
 "use client";
 
 import CircleLoader from "@/components/circle-loader";
-import ManageAccounts from "@/components/manage-accounts/index";
+import ManageAccounts from "@/components/manage-accounts";
 import UnauthPage from "@/components/unauth-page";
 import { GlobalContext } from "@/context";
 import { getAllfavorites, getTVorMovieSearchResults } from "@/utils";
@@ -28,7 +28,10 @@ export default function Search() {
     async function getSearchResults() {
       const tvShows = await getTVorMovieSearchResults("tv", params.query);
       const movies = await getTVorMovieSearchResults("movie", params.query);
-
+      const allFavorites = await getAllfavorites(
+        session?.user?.uid,
+        loggedInAccount?._id
+      );
       setSearchResults([
         ...tvShows
           .filter(
@@ -37,7 +40,12 @@ export default function Search() {
           .map((tvShowItem) => ({
             ...tvShowItem,
             type: "tv",
-            addedToFavorites: false,
+            addedToFavorites:
+              allFavorites && allFavorites.length
+                ? allFavorites
+                    .map((fav) => fav.movieID)
+                    .indexOf(tvShowItem.id) > -1
+                : false,
           })),
         ...movies
           .filter(
@@ -46,17 +54,24 @@ export default function Search() {
           .map((movieItem) => ({
             ...movieItem,
             type: "movie",
-            addedToFavorites: false,
+            addedToFavorites:
+              allFavorites && allFavorites.length
+                ? allFavorites.map((fav) => fav.movieID).indexOf(movieItem.id) >
+                  -1
+                : false,
           })),
       ]);
       setPageLoader(false);
+      console.log(tvShows, movies);
     }
+
     getSearchResults();
   }, [loggedInAccount]);
 
   if (session === null) return <UnauthPage />;
   if (loggedInAccount === null) return <ManageAccounts />;
   if (pageLoader) return <CircleLoader />;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}

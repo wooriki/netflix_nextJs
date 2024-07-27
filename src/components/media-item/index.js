@@ -6,10 +6,11 @@ import {
   ChevronDownIcon,
   CheckIcon,
 } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useContext } from "react";
 import { GlobalContext } from "@/context";
 import { useSession } from "next-auth/react";
+import { getAllfavorites } from "@/utils";
 
 const baseUrl = "https://image.tmdb.org/t/p/w500";
 
@@ -21,14 +22,13 @@ export default function MediaItem({
   title,
 }) {
   const router = useRouter();
-
+  const pathName = usePathname();
   const {
     setShowDetailsPopup,
     loggedInAccount,
     setFavorites,
     setCurrentMediaInfoIdAndType,
     similarMedias,
-
     searchResults,
     setSearchResults,
     setSimilarMedias,
@@ -37,6 +37,17 @@ export default function MediaItem({
   } = useContext(GlobalContext);
 
   const { data: session } = useSession();
+
+  async function updateFavorites() {
+    const res = await getAllfavorites(session?.user?.uid, loggedInAccount?._id);
+    if (res)
+      setFavorites(
+        res.map((item) => ({
+          ...item,
+          addedToFavorites: true,
+        }))
+      );
+  }
 
   async function handleAddToFavorites(item) {
     const { backdrop_path, poster_path, id, type } = item;
@@ -56,10 +67,67 @@ export default function MediaItem({
     });
 
     const data = await res.json();
-    console.log("here", data);
+
+    if (data && data.success) {
+      if (pathName.includes("my-list")) updateFavorites();
+      if (searchView) {
+        let updatedSearchResults = [...searchResults];
+        const indexOfCurrentAddedMedia = updatedSearchResults.findIndex(
+          (item) => item.id === id
+        );
+
+        updatedSearchResults[indexOfCurrentAddedMedia] = {
+          ...updatedSearchResults[indexOfCurrentAddedMedia],
+          addedToFavorites: true,
+        };
+
+        setSearchResults(updatedSearchResults);
+      } else if (similarMovieView) {
+        let updatedSimilarMedias = [...similarMedias];
+        const indexOfCurrentAddedMedia = updatedSimilarMedias.findIndex(
+          (item) => item.id === id
+        );
+
+        updatedSimilarMedias[indexOfCurrentAddedMedia] = {
+          ...updatedSimilarMedias[indexOfCurrentAddedMedia],
+          addedToFavorites: true,
+        };
+
+        setSimilarMedias(updatedSimilarMedias);
+      } else {
+        let updatedMediaData = [...mediaData];
+
+        const findIndexOfRowItem = updatedMediaData.findIndex(
+          (item) => item.title === title
+        );
+
+        let currentMovieArrayFromRowItem =
+          updatedMediaData[findIndexOfRowItem].medias;
+        const findIndexOfCurrentMovie = currentMovieArrayFromRowItem.findIndex(
+          (item) => item.id === id
+        );
+
+        currentMovieArrayFromRowItem[findIndexOfCurrentMovie] = {
+          ...currentMovieArrayFromRowItem[findIndexOfCurrentMovie],
+          addedToFavorites: true,
+        };
+
+        setMediaData(updatedMediaData);
+      }
+    }
+
+    console.log(data, "sangam");
   }
 
-  async function handleRemoveFavorites(item) {}
+  async function handleRemoveFavorites(item) {
+    const res = await fetch(`/api/favorites/remove-favorite?id=${item._id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (data.success) updateFavorites();
+  }
 
   return (
     <motion.div
@@ -76,17 +144,20 @@ export default function MediaItem({
           src={`${baseUrl}${media?.backdrop_path || media?.poster_path}`}
           alt="Media"
           fill
-          priority
           sizes="(min-width: 768px) 60vw, (max-width: 1200px) 50vw, 33vw"
           style={{ objectFit: "cover" }}
+          priority
           className="rounded sm object-cover md:rounded hover:rounded-sm"
-          onClick={() => router.push(`/watch/${media?.type}/${media.id}`)}
+          onClick={() =>
+            router.push(
+              `/watch/${media?.type}/${listView ? media?.movieID : media?.id}`
+            )
+          }
         />
-        <div className="space-x-3 hidden absolute p-2 bottom-0 buttonWrapper ">
+        <div className="space-x-3 hidden absolute p-2 bottom-0 buttonWrapper">
           <h2 className="text-white absolute bottom-20 truncate w-[90%] max-w-xs font-bold">
             {media.name || media.title}
           </h2>
-
           <button
             onClick={
               media?.addedToFavorites
@@ -110,7 +181,7 @@ export default function MediaItem({
               setShowDetailsPopup(true);
               setCurrentMediaInfoIdAndType({
                 type: media?.type,
-                id: media?.id,
+                id: listView ? media?.movieID : media?.id,
               });
             }}
             className="cursor-pointer p-2 border flex items-center gap-x-2 rounded-full  text-sm font-semibold transition hover:opacity-90  border-white  bg-black opacity-75 "

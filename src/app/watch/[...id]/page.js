@@ -22,30 +22,36 @@ export default function Watch() {
         params.id[0],
         params.id[1]
       );
+
       if (extractMediaDetails) {
         const findIndexOfTrailer = extractMediaDetails.results?.findIndex(
           (item) => item.type === "Trailer"
         );
+
         const findIndexOfClip = extractMediaDetails.results?.findIndex(
           (item) => item.type === "Clip"
         );
+
         setMediaDetails(extractMediaDetails);
         setKey(
           findIndexOfTrailer !== -1
             ? extractMediaDetails.results[findIndexOfTrailer]?.key
             : findIndexOfClip !== -1
             ? extractMediaDetails.results[findIndexOfClip]?.key
-            : "vL0pCFEGG2U"
+            : "XuDwndGaCFo"
         );
+
         setPageLoader(false);
       }
 
-      console.log("extractMediaDetails", extractMediaDetails);
+      console.log(extractMediaDetails);
     }
+
     getMediaDetails();
   }, [params]);
 
   if (pageLoader && mediaDetails === null) return <CircleLoader />;
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}

@@ -9,7 +9,7 @@ import { getAllfavorites, getTVorMoviesByGenre } from "@/utils";
 import { useSession } from "next-auth/react";
 import { useContext, useEffect } from "react";
 
-export default function Movies() {
+export default function medias() {
   const {
     loggedInAccount,
     mediaData,
@@ -35,11 +35,11 @@ export default function Movies() {
       const drama = await getTVorMoviesByGenre("movie", 18);
       const thriller = await getTVorMoviesByGenre("movie", 53);
       const horror = await getTVorMoviesByGenre("movie", 27);
-      // const allFavorites = await getAllfavorites(
-      //   session?.user?.uid,
-      //   loggedInAccount?._id
-      // );
-      // console.log(allFavorites, "allFavorites");
+      const allFavorites = await getAllfavorites(
+        session?.user?.uid,
+        loggedInAccount?._id
+      );
+      console.log(allFavorites, "allFavorites");
       setMediaData(
         [
           {
@@ -99,7 +99,11 @@ export default function Movies() {
           medias: item.medias.map((mediaItem) => ({
             ...mediaItem,
             type: "movie",
-            addedToFavorites: false,
+            addedToFavorites:
+              allFavorites && allFavorites.length
+                ? allFavorites.map((fav) => fav.movieID).indexOf(mediaItem.id) >
+                  -1
+                : false,
           })),
         }))
       );
@@ -110,8 +114,11 @@ export default function Movies() {
   }, [loggedInAccount]);
 
   if (session === null) return <UnauthPage />;
-  if (loggedInAccount === null) return <ManageAccouts />;
+  if (loggedInAccount === null) return <ManageAccounts />;
   if (pageLoader) return <CircleLoader />;
+
+  console.log(mediaData, "mediaData");
+
   return (
     <main className="flex min-h-screen flex-col">
       <CommonLayout mediaData={mediaData} />

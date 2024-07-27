@@ -1,15 +1,16 @@
 "use client";
 
+import CircleLoader from "@/components/circle-loader";
+import CommonLayout from "@/components/common-layout";
+import ManageAccounts from "@/components/manage-accounts";
 import UnauthPage from "@/components/unauth-page";
+import { GlobalContext } from "@/context";
+import { getAllfavorites, getTVorMoviesByGenre } from "@/utils";
 import { useSession } from "next-auth/react";
 import { useContext, useEffect } from "react";
-import { GlobalContext } from "../../context";
-import ManageAccouts from "@/components/manage-accounts";
-import CommonLayout from "@/components/common-layout";
-import { getTVorMoviesByGenre } from "@/utils";
-import CircleLoader from "@/components/circle-loader";
 
-export default function Tv() {
+export default function TV() {
+  const { data: session } = useSession();
   const {
     loggedInAccount,
     mediaData,
@@ -30,10 +31,10 @@ export default function Tv() {
       const war = await getTVorMoviesByGenre("tv", 10768);
       const western = await getTVorMoviesByGenre("tv", 37);
       const dramaMovies = await getTVorMoviesByGenre("tv", 18);
-      // const allFavorites = await getAllfavorites(
-      //   session?.user?.uid,
-      //   loggedInAccount?._id
-      // );
+      const allFavorites = await getAllfavorites(
+        session?.user?.uid,
+        loggedInAccount?._id
+      );
       setMediaData(
         [
           {
@@ -81,7 +82,11 @@ export default function Tv() {
           medias: item.medias.map((mediaItem) => ({
             ...mediaItem,
             type: "tv",
-            addedToFavorites: false,
+            addedToFavorites:
+              allFavorites && allFavorites.length
+                ? allFavorites.map((fav) => fav.movieID).indexOf(mediaItem.id) >
+                  -1
+                : false,
           })),
         }))
       );
@@ -91,10 +96,8 @@ export default function Tv() {
     getAllMedias();
   }, [loggedInAccount]);
 
-  const { data: session } = useSession();
   if (session === null) return <UnauthPage />;
-
-  if (loggedInAccount === null) return <ManageAccouts />;
+  if (loggedInAccount === null) return <ManageAccounts />;
 
   if (pageLoader) return <CircleLoader />;
 
