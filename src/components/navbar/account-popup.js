@@ -34,6 +34,7 @@ export default function AccountPopup({
       </div>
       <div>
         <button
+          className="bg-red-600 hover:bg-[#e50914] p-2 rounded"
           onClick={() => {
             setPageLoader(true);
             signOut();
