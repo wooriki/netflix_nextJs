@@ -48,7 +48,6 @@ export default function MediaItem({
         }))
       );
   }
-
   async function handleAddToFavorites(item) {
     const { backdrop_path, poster_path, id, type } = item;
     const res = await fetch("/api/favorites/add-favorite", {
