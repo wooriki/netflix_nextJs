@@ -3,7 +3,7 @@
 
 ### Deployment
 
-- https://netflix-next-js24.vercel.app/
+- https://netflix-next-js24-cy62i02e7-woorikis-projects.vercel.app/browse
 
 이 프로젝트는 Netflix와 유사한 스트리밍 서비스 웹 애플리케이션입니다. 사용자는 영화와 TV 프로그램을 탐색하고, 즐겨찾기에 추가하고, 로그인 및 회원가입 기능을 통해 개인화된 경험을 할 수 있습니다.
 
